@@ -3,19 +3,17 @@ from django.core.management.base import BaseCommand
 from catalog.models import Category, Product
 
 class Command(BaseCommand):
-    help = 'Очистка базы данных и заполнение новыми данными из JSON-файлов'
+    help = 'Fill the database with data from JSON files'
 
     @staticmethod
     def json_read_categories():
-        with open('fixtures/data.json', 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            return [entry['fields'] for entry in data if entry['model'] == 'catalog.category']
+        with open('fixtures/category_data.json', 'r', encoding='utf-8') as file:
+            return json.load(file)
 
     @staticmethod
     def json_read_products():
-        with open('fixtures/data.json', 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            return [entry['fields'] for entry in data if entry['model'] == 'catalog.product']
+        with open('fixtures/product_data.json', 'r', encoding='utf-8') as file:
+            return json.load(file)
 
     def handle(self, *args, **options):
         # Удалите все продукты
@@ -24,38 +22,35 @@ class Command(BaseCommand):
         Category.objects.all().delete()
 
         # Создайте списки для хранения объектов
-        categories_for_create = []
-        products_for_create = []
+        category_for_create = []
+        product_for_create = []
 
         # Обходим все значения категорий из фикстуры для получения информации об одном объекте
         for category_data in Command.json_read_categories():
-            categories_for_create.append(
-                Category(
-                    name=category_data['name'],
-                    description=category_data.get('description', '')
-                )
+            fields = category_data['fields']
+            category_for_create.append(
+                Category(id=category_data['pk'], name=fields['name'], description=fields['description'])
             )
 
         # Создаем объекты в базе с помощью метода bulk_create()
-        Category.objects.bulk_create(categories_for_create)
+        Category.objects.bulk_create(category_for_create)
 
         # Обходим все значения продуктов из фикстуры для получения информации об одном объекте
         for product_data in Command.json_read_products():
-            try:
-                category = Category.objects.get(pk=product_data['category'])
-            except Category.DoesNotExist:
-                self.stdout.write(self.style.ERROR(f"Категория с id '{product_data['category']}' не найдена"))
-                continue
-            products_for_create.append(
+            fields = product_data['fields']
+            product_for_create.append(
                 Product(
-                    name=product_data['name'],
-                    price=product_data['price'],
-                    description=product_data.get('description', ''),
-                    category=category
+                    id=product_data['pk'],
+                    name=fields['name'],
+                    description=fields['description'],
+                    price=fields['price'],
+                    category=Category.objects.get(pk=fields['category']),
+                    created_at=fields.get('created_at', None),
+                    updated_at=fields.get('updated_at', None)
                 )
             )
 
         # Создаем объекты в базе с помощью метода bulk_create()
-        Product.objects.bulk_create(products_for_create)
+        Product.objects.bulk_create(product_for_create)
 
-        self.stdout.write(self.style.SUCCESS('База данных успешно обновлена'))
+        self.stdout.write(self.style.SUCCESS('Database successfully filled with new data'))
