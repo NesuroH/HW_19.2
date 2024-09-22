@@ -1,0 +1,92 @@
+{% extends 'catalog/base.html' %}
+{% load my_tags %}
+{% block content %}
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">ElectronicStore</h1>
+        <h1 class="text-secondary">Блог</h1>
+        <a href="{% url 'blog:blog_create' %}" class="btn btn-primary my-2"><i class="bi bi-android"></i>Добавить запись</a>
+
+    </div>
+</section>
+
+
+<ul class="nav nav-pills justify-content-center">
+    <li class="nav-item">
+
+        <a class="nav-link {{ active }}" aria-current="page" href="{% url 'blog:blog_list' %}">Активные</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ inactive }}" href="{% url 'blog:blog_list2' %}">Неактивные</a>
+    </li>
+</ul>
+
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end">
+                    {% if page_obj.has_previous %}
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only"></span>
+                    </a>
+                    {% endif %}
+                    {% for p in paginator.page_range %}
+                    {% if page_obj.number == p %}
+                    <li class="page-item active">
+                        <a class="page-link"><span class="sr-only">{{ p }}</span></a>
+                    </li>
+                    {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+                    <li class="page-link"><a href="?page={{ p }}">{{ p }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only"></span>
+                    </a>
+                    {% endif %}
+                </ul>
+            </nav>
+
+
+            {% for blog in object_list %}
+
+
+            <div class="col-md-4">
+                <div class="card mb-4 box-shadow">
+                    <img src="{{ blog.image| media_filter }}">
+                    <div class="card-body">
+                        <p class="fw-normal">{{ blog.title }}</p>
+                        <p>{{ blog.content }}</p>
+
+                        <p><a class="btn btn-primary" href="{% url 'blog:blog_detail' blog.pk %}">Посмотреть
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-eye" viewBox="0 0 16 16">
+                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                            </svg>
+                        </a></p>
+                        <p><a class="btn btn-success" href="{% url 'blog:blog_update' blog.pk %}">Редактировать
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-hammer" viewBox="0 0 16 16">
+                                <path d="M9.972 2.508a.5.5 0 0 0-.16-.556l-.178-.129a5.009 5.009 0 0 0-2.076-.783C6.215.862 4.504 1.229 2.84 3.133H1.786a.5.5 0 0 0-.354.147L.146 4.567a.5.5 0 0 0 0 .706l2.571 2.579a.5.5 0 0 0 .708 0l1.286-1.29a.5.5 0 0 0 .146-.353V5.57l8.387 8.873A.5.5 0 0 0 14 14.5l1.5-1.5a.5.5 0 0 0 .017-.689l-9.129-8.63c.747-.456 1.772-.839 3.112-.839a.5.5 0 0 0 .472-.334z"/>
+                            </svg>
+                        </a></p>
+                        <p><a class="btn btn-danger" href="{% url 'blog:blog_delete' blog.pk %}">Удалить
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd"
+                                      d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                        </a></p>
+                    </div>
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+            {% endblock %}

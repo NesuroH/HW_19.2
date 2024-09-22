@@ -1,14 +1,14 @@
-from django.shortcuts import render, get_object_or_404
 from .models import Product
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+
+class ProductListView(ListView):
+    model = Product
+    template_name = 'products_list.html'
+    context_object_name = 'products'
 
 
-def products_list(request):
-    products = Product.objects.all()
-    context = {"products": products}
-    return render(request, 'products_list.html', context)
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'products_detail.html'
+    context_object_name = 'product'
 
-
-def products_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    context = {"product": product}
-    return render(request, 'products_detail.html', context)
