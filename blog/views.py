@@ -70,11 +70,12 @@ class BlogListView(LoginRequiredMixin, ListView):
 class BlogDetailView(LoginRequiredMixin, DetailView):
     model = Blog
 
-    def get_object(self, queryset=None):
-        self.object = super().get_object(queryset)
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
         self.object.count_views += 1
         self.object.save()
-        return self.object
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
 
 class BlogDeleteView(LoginRequiredMixin, DeleteView):
