@@ -21,9 +21,11 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+NULLABLE = {'blank': True, 'null': True}
+
 
 class Product(models.Model):
-
+    status = models.BooleanField(verbose_name='Статус продукта', default=False)
     name = models.CharField(
         max_length=100,
         verbose_name="Наименование",
@@ -70,12 +72,17 @@ class Product(models.Model):
         default=0,
     )
 
-    owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца продукта", blank=True, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE, **NULLABLE)
 
     class Meta:
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
         ordering = ["category", "name"]
+        permissions = [
+            ('can_change_product_description', 'Может изменять описание продукта'),
+            ('can_change_product_category', 'Может изменять категорию продукта'),
+            ('can_change_product_status', 'Может изменять статус публикации продукта'),
+        ]
 
     def __str__(self):
         return self.name
