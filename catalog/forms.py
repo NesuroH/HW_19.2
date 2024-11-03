@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, BooleanField
+from django import forms
 
 from catalog.models import Product, Version
 
@@ -41,6 +42,21 @@ class ProductForm(StyleFormMixin, ModelForm):
                     raise ValidationError(f"В описании продукта не должно быть слова '{part_description}' ")
 
         return description
+
+class ModeratorProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ('description', 'category', 'status')
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs['class'] = 'form-check-input'
+            else:
+                field.widget.attrs['class'] = 'form-control'
+
 
 
 class VersionForm(StyleFormMixin, ModelForm):
