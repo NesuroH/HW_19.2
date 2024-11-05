@@ -1,6 +1,7 @@
 from django.forms import ModelForm, BooleanField
 from blog.models import Blog
 
+
 class StyleFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

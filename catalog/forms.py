@@ -43,11 +43,11 @@ class ProductForm(StyleFormMixin, ModelForm):
 
         return description
 
+
 class ModeratorProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ('description', 'category', 'status')
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -56,7 +56,6 @@ class ModeratorProductForm(forms.ModelForm):
                 field.widget.attrs['class'] = 'form-check-input'
             else:
                 field.widget.attrs['class'] = 'form-control'
-
 
 
 class VersionForm(StyleFormMixin, ModelForm):

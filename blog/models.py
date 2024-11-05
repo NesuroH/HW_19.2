@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 from django.db import models
 
+
 class Blog(models.Model):
     title = models.CharField(
         max_length=100,
@@ -32,10 +33,8 @@ class Blog(models.Model):
 
     views_count = models.IntegerField(default=0, verbose_name="Просмотры")
 
-
     def __str__(self):
         return self.title
-
 
     class Meta:
         verbose_name = "статья"

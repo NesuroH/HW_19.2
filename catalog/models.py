@@ -21,6 +21,7 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 NULLABLE = {'blank': True, 'null': True}
 
 
