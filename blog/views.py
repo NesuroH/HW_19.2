@@ -27,6 +27,7 @@ class BlogListView(ListView):
         context['object_publ'] = object_publ
         return context
 
+
 class BlogDetailView(DetailView):
     model = Blog
 
